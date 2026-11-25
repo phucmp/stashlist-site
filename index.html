@@ -99,6 +99,20 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .mascot-wrap{position:relative;display:flex;justify-content:center}
 .mascot{width:min(360px,80%)}
 
+/* ---- sneak-peek phone mockup, cycling real screenshots ---- */
+.preview-wrap{display:flex;flex-direction:column;align-items:center;margin-top:2.2rem}
+.phone-frame{
+  position:relative;width:240px;height:520px;padding:10px;
+  background:var(--ink);border-radius:40px;
+  box-shadow:0 24px 50px rgba(0,0,0,.18);
+}
+.phone-frame img{width:100%;height:100%;object-fit:cover;border-radius:30px;display:block;transition:opacity .3s ease}
+.phone-notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:80px;height:22px;background:var(--ink);border-radius:0 0 14px 14px;z-index:2}
+.preview-caption{margin-top:1.3rem;font-weight:800;color:var(--ink);text-align:center;min-height:1.4em}
+.preview-dots{display:flex;justify-content:center;gap:8px;margin-top:.7rem}
+.preview-dot{width:9px;height:9px;border-radius:50%;background:#E7DCC9;border:none;padding:0;cursor:pointer}
+.preview-dot.active{background:var(--accent)}
+
 /* ---- how it works ---- */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.6rem;margin-top:2.4rem;position:relative}
 .step{position:relative;background:#fff;border:2.5px solid var(--ink);border-radius:20px;padding:1.6rem 1.3rem;box-shadow:4px 4px 0 var(--ink)}
@@ -155,6 +169,7 @@ footer{border-top:2.5px solid var(--ink);padding-block:2.6rem}
   <div class="nav-inner">
     <a href="#home" class="brand"><span class="wordmark">Stashlist</span></a>
     <div class="navlinks">
+      <a href="#preview">Preview</a>
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
       <a href="#privacy">Privacy</a>
@@ -214,6 +229,21 @@ footer{border-top:2.5px solid var(--ink);padding-block:2.6rem}
             <path d="M120 190 Q140 204 160 190" fill="none" stroke="var(--outline)" stroke-width="6" stroke-linecap="round"/>
           </svg>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band reveal" id="preview">
+    <div class="wrap" style="text-align:center">
+      <h2 style="font-size:2rem">See it in action.</h2>
+      <p class="lede" style="margin:.8rem auto 0">Real screens from the app, before it's even live.</p>
+      <div class="preview-wrap">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <img id="previewImg" src="screenshots/detail.png" alt="Stashlist app screenshot">
+        </div>
+        <div class="preview-caption" id="previewCaption">Detail — rate it, star it, add it to a playlist</div>
+        <div class="preview-dots" id="previewDots"></div>
       </div>
     </div>
   </section>
@@ -431,6 +461,57 @@ footer{border-top:2.5px solid var(--ink);padding-block:2.6rem}
   }
 
   showFromHash();
+})();
+
+(function(){
+  var slides = [
+    { src: 'screenshots/detail.png', caption: 'Detail — rate it, star it, add it to a playlist' },
+    { src: 'screenshots/playlists.png', caption: 'Playlists — group titles your own way' },
+    { src: 'screenshots/add.png', caption: "Can't screenshot it? Add a title directly" },
+    { src: 'screenshots/settings.png', caption: 'Settings — simple, and all on your phone' }
+  ];
+  var img = document.getElementById('previewImg');
+  var caption = document.getElementById('previewCaption');
+  var dotsWrap = document.getElementById('previewDots');
+  if (!img || !dotsWrap) return;
+
+  var current = 0;
+  var timer = null;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  slides.forEach(function (_, idx) {
+    var dot = document.createElement('button');
+    dot.className = 'preview-dot' + (idx === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Show screenshot ' + (idx + 1));
+    dot.addEventListener('click', function () {
+      show(idx);
+      restartTimer();
+    });
+    dotsWrap.appendChild(dot);
+  });
+
+  function show(idx) {
+    current = idx;
+    img.style.opacity = 0;
+    setTimeout(function () {
+      img.src = slides[current].src;
+      caption.textContent = slides[current].caption;
+      Array.prototype.forEach.call(dotsWrap.children, function (dot, dotIdx) {
+        dot.classList.toggle('active', dotIdx === current);
+      });
+      img.style.opacity = 1;
+    }, 250);
+  }
+
+  function restartTimer() {
+    if (reduceMotion) return;
+    if (timer) clearInterval(timer);
+    timer = setInterval(function () {
+      show((current + 1) % slides.length);
+    }, 3200);
+  }
+
+  restartTimer();
 })();
 </script>
 </body>
