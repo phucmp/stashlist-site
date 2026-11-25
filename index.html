@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Stashlist — Screenshots to watchlist</title>
-<meta name="description" content="Screenshot a movie or show from Reels or Shorts. Stashlist reads it, finds the title, and builds your watchlist — all on your phone. No accounts, no ads, no tracking.">
+<meta name="description" content="Screenshot a movie or show from Reels or Shorts. Stashlist reads it, finds the title, and builds your watchlist — all on your phone. No accounts, no ads, no usage tracking.">
 <meta property="og:title" content="Stashlist">
 <meta property="og:description" content="Screenshots to watchlist. Everything stays on your phone.">
 <meta property="og:type" content="website">
@@ -328,15 +328,15 @@ footer{border-top:2.5px solid var(--ink);padding-block:2.6rem}
   <section class="band privacy reveal" id="privacy">
     <div class="wrap">
       <h2 style="font-size:2.1rem">Everything stays on your phone.</h2>
-      <p class="lede" style="margin-top:.8rem">No backend. No account. Nothing to log into, and nothing of yours leaves your device except a short search query, to find the title you already chose.</p>
+      <p class="lede" style="margin-top:.8rem">No backend. No account. Nothing to log into, and nothing of yours leaves your device except a short search query and, if something breaks, an anonymous crash report.</p>
       <div class="privacy-grid">
         <ul>
           <li><span class="check">✓</span> No accounts, no login, no cloud sync.</li>
-          <li><span class="check">✓</span> No ads, no tracking, no analytics of any kind.</li>
+          <li><span class="check">✓</span> No ads, no usage tracking, no behavioral analytics.</li>
           <li><span class="check">✓</span> Your screenshots are read on-device and never uploaded.</li>
           <li><span class="check">✓</span> Delete the app, and your data goes with it.</li>
         </ul>
-        <p class="fineprint">Title and poster lookups go to <a href="https://www.themoviedb.org/privacy-policy" target="_blank" rel="noopener">The Movie Database (TMDB)</a>. This product uses the TMDB API but is not endorsed or certified by TMDB. Full detail in the <a href="#privacy-page">Privacy Policy</a>.</p>
+        <p class="fineprint">Title and poster lookups go to <a href="https://www.themoviedb.org/privacy-policy" target="_blank" rel="noopener">The Movie Database (TMDB)</a>. Crash reports go to <a href="https://sentry.io/privacy/" target="_blank" rel="noopener">Sentry</a> to help fix bugs — never your screenshots, titles, or notes. This product uses the TMDB API but is not endorsed or certified by TMDB. Full detail in the <a href="#privacy-page">Privacy Policy</a>.</p>
       </div>
     </div>
   </section>
@@ -360,14 +360,13 @@ footer{border-top:2.5px solid var(--ink);padding-block:2.6rem}
   <div class="wrap legal">
     <a class="back-home" href="#home">← Stashlist</a>
     <h1>Your data stays on your phone.</h1>
-    <p class="updated">Last updated November 23, 2026</p>
+    <p class="updated">Last updated November 25, 2026</p>
     <p style="margin-top:1.2rem">Stashlist is built to keep everything on your phone. This policy explains exactly what the app does and does not do with your data.</p>
     <h2>What Stashlist does not do</h2>
     <ul>
-      <li>It does not collect, store, or transmit any personal information to its developer.</li>
-      <li>It does not use analytics, advertising, or tracking of any kind.</li>
+      <li>It does not use analytics, advertising, or behavioral tracking of any kind.</li>
       <li>It does not have user accounts, logins, or cloud sync.</li>
-      <li>It does not share your data with any third party, except as described below.</li>
+      <li>It does not sell your data or share it with any third party, except as described below.</li>
     </ul>
     <h2>What stays on your phone</h2>
     <p>Everything you save in Stashlist — titles, posters, genres, status, priority, notes, your own ratings, and any playlists you create — is stored only in the app's local storage on your device. It is never uploaded anywhere. If you delete the app, this data is deleted with it.</p>
@@ -375,6 +374,7 @@ footer{border-top:2.5px solid var(--ink);padding-block:2.6rem}
     <p><strong style="color:var(--ink)">Photos:</strong> When you choose to import screenshots, Stashlist reads the images you select to find on-screen text, entirely on your device using Apple's on-device text recognition — the image itself never leaves your phone. If you turn on "Delete screenshots after saving" in Settings, Stashlist also requests permission to delete the original screenshots you imported, after you've confirmed the save. iOS always asks you to confirm this deletion itself.</p>
     <h2>What Stashlist sends over the network</h2>
     <p><strong style="color:var(--ink)">The Movie Database (TMDB):</strong> After reading text from a screenshot, Stashlist sends short search queries, not the image itself, to TMDB's API to find the matching movie or TV show title, poster, and synopsis. See <a style="color:var(--outline);text-decoration:underline;font-weight:700" href="https://www.themoviedb.org/privacy-policy" target="_blank" rel="noopener">TMDB's own privacy policy</a> for how they handle these requests. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+    <p><strong style="color:var(--ink)">Crash reporting (Sentry):</strong> If Stashlist crashes or hits an unexpected error, a report — your device model, OS version, app version, and the error itself — is sent to Sentry, the crash-reporting service used to find and fix bugs. This never includes your screenshots, saved titles, notes, or any other content you've saved. See <a style="color:var(--outline);text-decoration:underline;font-weight:700" href="https://sentry.io/privacy/" target="_blank" rel="noopener">Sentry's privacy policy</a> for how they handle this data.</p>
     <h2>Changes to this policy</h2>
     <p>If this policy changes, the "Last updated" date above will change, and the new policy will be posted at the same location.</p>
     <h2>Contact</h2>
