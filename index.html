@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stashlist — Screenshots to watchlist</title>
+<meta name="description" content="Screenshot a movie or show from Reels or Shorts. Stashlist reads it, finds the title, and builds your watchlist — all on your phone. No accounts, no ads, no tracking.">
+<meta property="og:title" content="Stashlist">
+<meta property="og:description" content="Screenshots to watchlist. Everything stays on your phone.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: a bright, hand-drawn-feeling page built around a round "film reel"
+   mascot — warm amber (the app's own accent) outlined in deep maroon, sticker-
+   style wordmark, floating ticket/popcorn doodles, bouncy scroll-reveals.
+   Deliberately single (light) theme, mirroring the playful reference site. */
+:root{
+  --bg:#FFFFFF;
+  --bg-alt:#F7F1E6;
+  --bg-soft-green:#EFF6EE;
+  --ink:#271C16;
+  --copy:#8C5A42;
+  --accent:#F2A33A;
+  --accent-deep:#D9821A;
+  --outline:#6B3A2A;
+  --good:#3E9C5C;
+  --sky:#8FC6E8;
+  --salmon:#F2A694;
+  --font-display:'Baloo 2',system-ui,sans-serif;
+  --font-body:'Nunito',system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{
+  margin:0;color:var(--ink);font-family:var(--font-body);
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+img{max-width:100%}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;text-wrap:balance;margin:0;color:var(--ink)}
+p{color:var(--copy);margin:0}
+.lede{font-size:1.15rem;line-height:1.6;max-width:32em;font-weight:600}
+.wrap{max-width:1100px;margin:0 auto;position:relative}
+.band{padding-block:4.5rem}
+
+/* ---- sticker wordmark ---- */
+.wordmark{
+  font-family:var(--font-display);font-weight:800;color:var(--accent);
+  -webkit-text-stroke:3px var(--outline);paint-order:stroke fill;
+  text-shadow:5px 6px 0 var(--outline);
+  display:inline-block;
+}
+
+/* ---- nav ---- */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(255,255,255,.92);border-bottom:2px solid var(--ink)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:#fff}
+.nav-inner{max-width:1100px;margin:0 auto;padding:.8rem max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.brand{display:flex;align-items:center;gap:.5rem}
+.brand .wordmark{font-size:1.4rem;-webkit-text-stroke:1.6px var(--outline);text-shadow:2px 3px 0 var(--outline)}
+.navlinks{display:flex;gap:1.6rem;font-size:.92rem;font-weight:700;color:var(--ink)}
+.navlinks a:hover{color:var(--accent-deep)}
+.cta-pill{background:var(--accent);color:var(--outline);font-weight:800;padding:.55em 1.2em;border-radius:999px;border:2.5px solid var(--outline);box-shadow:3px 3px 0 var(--outline);font-size:.88rem}
+@media (max-width:680px){.navlinks{display:none}}
+
+/* ---- decorative doodles ---- */
+.doodle{position:absolute;pointer-events:none}
+.dot{border-radius:50%}
+.float{animation:float 5s ease-in-out infinite}
+.float-slow{animation:float 7s ease-in-out infinite}
+.spin-slow{animation:spin 22s linear infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-14px) rotate(var(--r,0deg))}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.float,.float-slow,.spin-slow,.bob{animation:none!important}}
+
+/* ---- reveal-on-scroll ---- */
+.reveal{opacity:0;transform:translateY(24px) scale(.97);transition:opacity .55s cubic-bezier(.2,.9,.3,1.4), transform .55s cubic-bezier(.2,.9,.3,1.4)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* ---- hero ---- */
+.hero{position:relative;padding-top:2.5rem;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:2rem;align-items:center;padding-block:3rem 4rem;position:relative;z-index:1}
+.hero h1.wordmark{font-size:clamp(3.2rem,8vw,5.2rem);line-height:.95}
+.hero .tag{margin-top:.9rem;font-size:1.3rem;font-weight:800;color:var(--outline)}
+.hero .lede{margin-top:.9rem}
+.badges{display:flex;gap:.7rem;margin-top:1.8rem;flex-wrap:wrap}
+.badge{
+  display:inline-flex;align-items:center;gap:.5em;background:var(--accent);color:var(--outline);
+  font-weight:800;padding:.7em 1.3em;border-radius:999px;border:2.5px solid var(--outline);
+  box-shadow:3px 3px 0 var(--outline);font-size:.92rem;
+}
+.badge.ghost{background:#fff}
+
+/* ---- mascot ---- */
+.mascot-wrap{position:relative;display:flex;justify-content:center}
+.mascot{width:min(360px,80%)}
+
+/* ---- how it works ---- */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.6rem;margin-top:2.4rem;position:relative}
+.step{position:relative;background:#fff;border:2.5px solid var(--ink);border-radius:20px;padding:1.6rem 1.3rem;box-shadow:4px 4px 0 var(--ink)}
+.step .ghost-num{position:absolute;top:-1.4rem;right:.4rem;font-size:4.2rem;font-weight:800;color:transparent;-webkit-text-stroke:2px #E7DCC9;z-index:0;font-family:var(--font-display)}
+.step h3{font-size:1.1rem;position:relative}
+.step p{margin-top:.4rem;font-size:.92rem;position:relative}
+@media (max-width:860px){.steps{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.steps{grid-template-columns:1fr}}
+
+/* ---- showcases: alternating illustration / text, like a storyboard ---- */
+.showcase-row{display:flex;gap:3rem;align-items:center;flex-wrap:wrap;padding-block:2.6rem;border-bottom:2px dashed #E7DCC9}
+.showcase-row:last-child{border-bottom:none}
+.showcase-row.reverse{flex-direction:row-reverse}
+.showcase-art{flex:1 1 280px;display:flex;justify-content:center}
+.showcase-art svg{width:min(300px,100%)}
+.showcase-text{flex:1 1 300px}
+.showcase-text h3{font-size:1.5rem}
+.showcase-text ul{list-style:none;margin:1rem 0 0;padding:0;display:grid;gap:.6rem}
+.showcase-text li{position:relative;padding-left:1.3rem;color:var(--copy);font-weight:700;font-size:.98rem}
+.showcase-text li::before{content:"";position:absolute;left:0;top:.5em;width:8px;height:8px;border-radius:50%;background:var(--accent);border:1.5px solid var(--outline)}
+
+/* ---- privacy ---- */
+.privacy{background:var(--bg-soft-green)}
+.privacy-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.6rem;align-items:start;margin-top:1.8rem}
+.privacy ul{list-style:none;margin:0;padding:0;display:grid;gap:.85rem}
+.privacy li{display:flex;gap:.7rem;align-items:flex-start;color:var(--ink);font-weight:700;font-size:.98rem}
+.check{flex:none;width:24px;height:24px;border-radius:50%;background:var(--good);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.72rem;margin-top:.1em;border:2px solid var(--ink)}
+.fineprint{margin-top:1.3rem;font-size:.86rem}
+.fineprint a{text-decoration:underline;font-weight:700;color:var(--outline)}
+@media (max-width:760px){.privacy-grid{grid-template-columns:1fr}}
+
+/* ---- footer ---- */
+footer{border-top:2.5px solid var(--ink);padding-block:2.6rem}
+.foot-grid{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;align-items:flex-end}
+.foot-links{display:flex;gap:1.4rem;font-size:.88rem;font-weight:700;color:var(--ink)}
+.foot-links a:hover{color:var(--accent-deep)}
+.foot-muted{font-size:.85rem;margin-top:.4rem}
+
+/* ---- legal pages ---- */
+.legal{max-width:660px;padding-block:3.5rem 5rem}
+.legal h1{font-size:2.1rem}
+.legal h2{font-family:var(--font-body);font-size:1.1rem;font-weight:800;color:var(--ink);margin-top:2rem}
+.legal p,.legal li{color:var(--copy);font-size:.96rem;line-height:1.65}
+.legal ul{padding-left:1.1rem;margin:.6rem 0 0}
+.legal .updated{font-weight:800;font-size:.8rem;color:var(--accent-deep)}
+.back-home{display:inline-flex;align-items:center;gap:.4em;margin-bottom:1.6rem;font-size:.88rem;font-weight:800;color:var(--outline)}
+
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#home" class="brand"><span class="wordmark">Stashlist</span></a>
+    <div class="navlinks">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+    </div>
+    <a href="#home" class="cta-pill">Coming soon</a>
+  </div>
+</nav>
+
+<main id="view-home">
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="doodle dot float" style="top:4%;right:6%;width:14px;height:14px;background:var(--salmon);--r:0deg"></div>
+      <div class="doodle dot float-slow" style="top:16%;right:22%;width:9px;height:9px;border:2px solid #E7DCC9;background:none"></div>
+      <div class="doodle spin-slow" style="top:2%;right:14%;width:46px;height:46px;border:3px dashed var(--sky);border-radius:50%;opacity:.7"></div>
+      <div class="doodle float" style="bottom:6%;left:2%;width:11px;height:11px;border-radius:50%;background:var(--sky);--r:0deg"></div>
+
+      <div class="hero-grid">
+        <div>
+          <h1 class="wordmark">Stashlist</h1>
+          <div class="tag">Screenshots to watchlist.</div>
+          <p class="lede">Screenshot a movie or show from Reels or Shorts. Stashlist reads it, finds the title, and builds your watchlist — all on your phone.</p>
+          <div class="badges">
+            <span class="badge"> Coming soon to the App Store</span>
+          </div>
+        </div>
+        <div class="mascot-wrap">
+          <svg class="mascot bob" viewBox="0 0 280 270" style="animation:float 4.5s ease-in-out infinite">
+            <defs>
+              <pattern id="clapstripes" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(28)">
+                <rect width="26" height="26" fill="#FBF6EC"/>
+                <rect width="13" height="26" fill="var(--outline)"/>
+              </pattern>
+            </defs>
+            <ellipse cx="140" cy="260" rx="80" ry="9" fill="#F2A694" opacity=".3"/>
+            <!-- legs -->
+            <g stroke="var(--outline)" stroke-width="6" stroke-linecap="round">
+              <line x1="100" y1="222" x2="88" y2="246"/>
+              <line x1="180" y1="222" x2="192" y2="246"/>
+            </g>
+            <ellipse cx="86" cy="250" rx="14" ry="7" fill="#fff" stroke="var(--outline)" stroke-width="4"/>
+            <ellipse cx="194" cy="250" rx="14" ry="7" fill="#fff" stroke="var(--outline)" stroke-width="4"/>
+            <!-- clapperboard body -->
+            <rect x="52" y="86" width="176" height="136" rx="16" fill="var(--accent)" stroke="var(--outline)" stroke-width="7"/>
+            <!-- hinged, open clapper bar -->
+            <g transform="rotate(-26 52 86)">
+              <rect x="52" y="54" width="176" height="30" rx="6" fill="url(#clapstripes)" stroke="var(--outline)" stroke-width="6"/>
+            </g>
+            <circle cx="52" cy="86" r="8" fill="var(--outline)"/>
+            <!-- face, on the board -->
+            <circle cx="104" cy="150" r="24" fill="#fff" stroke="var(--outline)" stroke-width="5"/>
+            <circle cx="186" cy="150" r="24" fill="#fff" stroke="var(--outline)" stroke-width="5"/>
+            <circle cx="110" cy="153" r="9" fill="var(--outline)"/>
+            <circle cx="192" cy="153" r="9" fill="var(--outline)"/>
+            <circle cx="96" cy="182" r="8" fill="var(--salmon)" opacity=".85"/>
+            <circle cx="200" cy="182" r="8" fill="var(--salmon)" opacity=".85"/>
+            <path d="M120 190 Q140 204 160 190" fill="none" stroke="var(--outline)" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band reveal" id="how">
+    <div class="wrap">
+      <h2 style="font-size:2rem">Four taps, start to saved.</h2>
+      <div class="steps">
+        <div class="step"><div class="ghost-num">1</div><h3>Screenshot it</h3><p>See a movie or show in a Reel or Short? Screenshot it like you already do.</p></div>
+        <div class="step"><div class="ghost-num">2</div><h3>Import</h3><p>Pick as many screenshots as you want to add, all at once.</p></div>
+        <div class="step"><div class="ghost-num">3</div><h3>Match</h3><p>Stashlist reads the screenshot on your phone and finds the title, genre, and synopsis.</p></div>
+        <div class="step"><div class="ghost-num">4</div><h3>Confirm</h3><p>Fix it in two taps if it's wrong. Otherwise, it's already saved.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band reveal" id="features" style="background:var(--bg-alt)">
+    <div class="wrap">
+      <h2 style="font-size:2rem">Everything a watchlist actually needs.</h2>
+
+      <div class="showcase-row">
+        <div class="showcase-art">
+          <svg viewBox="0 0 260 200">
+            <rect x="20" y="14" width="200" height="172" rx="18" fill="#fff" stroke="var(--outline)" stroke-width="5"/>
+            <rect x="40" y="36" width="34" height="34" rx="8" fill="var(--sky)" opacity=".5" stroke="var(--outline)" stroke-width="3"/>
+            <rect x="86" y="42" width="60" height="10" rx="5" fill="#EADFC8"/>
+            <rect x="86" y="58" width="40" height="8" rx="4" fill="#EADFC8"/>
+            <rect x="158" y="40" width="46" height="20" rx="10" fill="var(--accent)" stroke="var(--outline)" stroke-width="3"/>
+            <rect x="40" y="86" width="34" height="34" rx="8" fill="var(--salmon)" opacity=".5" stroke="var(--outline)" stroke-width="3"/>
+            <rect x="86" y="92" width="70" height="10" rx="5" fill="#EADFC8"/>
+            <rect x="86" y="108" width="36" height="8" rx="4" fill="#EADFC8"/>
+            <rect x="158" y="90" width="46" height="20" rx="10" fill="#fff" stroke="var(--outline)" stroke-width="3"/>
+            <rect x="40" y="136" width="34" height="34" rx="8" fill="var(--good)" opacity=".4" stroke="var(--outline)" stroke-width="3"/>
+            <rect x="86" y="142" width="50" height="10" rx="5" fill="#EADFC8"/>
+            <g stroke="var(--outline)" stroke-width="3" fill="var(--accent)">
+              <path d="M150 153 l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/>
+              <path d="M172 153 l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/>
+              <path d="M194 153 l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#fff"/>
+            </g>
+          </svg>
+        </div>
+        <div class="showcase-text">
+          <h3>Know what to watch next</h3>
+          <ul>
+            <li>Track To Watch, Watching, and Watched — one tap to move along.</li>
+            <li>Set a priority, so you know what's actually next.</li>
+            <li>Rate what you've watched, right when you finish it.</li>
+            <li>Delete the original screenshots in one tap once they're saved.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="showcase-row reverse">
+        <div class="showcase-art">
+          <svg viewBox="0 0 260 200">
+            <g transform="rotate(-9 130 100)">
+              <rect x="50" y="60" width="130" height="90" rx="14" fill="var(--sky)" opacity=".55" stroke="var(--outline)" stroke-width="4"/>
+              <line x1="92" y1="60" x2="92" y2="150" stroke="var(--outline)" stroke-width="3"/>
+              <line x1="138" y1="60" x2="138" y2="150" stroke="var(--outline)" stroke-width="3"/>
+            </g>
+            <g transform="rotate(4 130 100)">
+              <rect x="56" y="54" width="130" height="90" rx="14" fill="var(--salmon)" opacity=".55" stroke="var(--outline)" stroke-width="4"/>
+              <line x1="98" y1="54" x2="98" y2="144" stroke="var(--outline)" stroke-width="3"/>
+              <line x1="144" y1="54" x2="144" y2="144" stroke="var(--outline)" stroke-width="3"/>
+            </g>
+            <rect x="62" y="48" width="130" height="90" rx="14" fill="var(--accent)" stroke="var(--outline)" stroke-width="5"/>
+            <line x1="104" y1="48" x2="104" y2="138" stroke="var(--outline)" stroke-width="4"/>
+            <line x1="150" y1="48" x2="150" y2="138" stroke="var(--outline)" stroke-width="4"/>
+            <path d="M24 170 Q10 120 70 150" fill="none" stroke="var(--outline)" stroke-width="3.5" stroke-dasharray="7 7" stroke-linecap="round"/>
+            <circle cx="22" cy="170" r="6" fill="var(--outline)"/>
+          </svg>
+        </div>
+        <div class="showcase-text">
+          <h3>Playlists, made to share</h3>
+          <ul>
+            <li>Group titles your own way — no limit on how many.</li>
+            <li>Send a playlist straight to a friend.</li>
+            <li>Add or pull titles out any time, from the title itself.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="showcase-row">
+        <div class="showcase-art">
+          <svg viewBox="0 0 260 200">
+            <g transform="rotate(-7 130 100)">
+              <rect x="50" y="110" width="76" height="40" rx="6" fill="#fff" stroke="var(--outline)" stroke-width="3.5"/>
+              <line x1="58" y1="120" x2="110" y2="120" stroke="#E7DCC9" stroke-width="3"/>
+              <line x1="58" y1="130" x2="100" y2="130" stroke="#E7DCC9" stroke-width="3"/>
+              <line x1="58" y1="140" x2="90" y2="140" stroke="#E7DCC9" stroke-width="3"/>
+            </g>
+            <rect x="96" y="44" width="78" height="30" rx="15" fill="var(--sky)" opacity=".6" stroke="var(--outline)" stroke-width="3"/>
+            <text x="135" y="64" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="13" fill="var(--outline)">Drama</text>
+            <rect x="150" y="80" width="86" height="30" rx="15" fill="var(--accent)" stroke="var(--outline)" stroke-width="3"/>
+            <text x="193" y="100" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="13" fill="var(--outline)">Comedy</text>
+            <path d="M158 70 l3.5 7 7.7 1.1-5.6 5.4 1.3 7.6L158 87.5l-6.9 3.6 1.3-7.6-5.6-5.4 7.7-1.1z" fill="#fff" stroke="var(--outline)" stroke-width="2.5"/>
+          </svg>
+        </div>
+        <div class="showcase-text">
+          <h3>Filter, favorite, and remember why</h3>
+          <ul>
+            <li>Filter your whole list down by genre.</li>
+            <li>Star the ones you love most.</li>
+            <li>Add a note for why you saved it, before you forget.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="band privacy reveal" id="privacy">
+    <div class="wrap">
+      <h2 style="font-size:2.1rem">Everything stays on your phone.</h2>
+      <p class="lede" style="margin-top:.8rem">No backend. No account. Nothing to log into, and nothing of yours leaves your device except a short search query, to find the title you already chose.</p>
+      <div class="privacy-grid">
+        <ul>
+          <li><span class="check">✓</span> No accounts, no login, no cloud sync.</li>
+          <li><span class="check">✓</span> No ads, no tracking, no analytics of any kind.</li>
+          <li><span class="check">✓</span> Your screenshots are read on-device and never uploaded.</li>
+          <li><span class="check">✓</span> Delete the app, and your data goes with it.</li>
+        </ul>
+        <p class="fineprint">Title and poster lookups go to <a href="https://www.themoviedb.org/privacy-policy" target="_blank" rel="noopener">The Movie Database (TMDB)</a>. This product uses the TMDB API but is not endorsed or certified by TMDB. Full detail in the <a href="#privacy-page">Privacy Policy</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot-grid">
+      <div>
+        <span class="wordmark" style="font-size:1.2rem;-webkit-text-stroke:1.8px var(--outline);text-shadow:2.5px 3px 0 var(--outline)">Stashlist</span>
+        <p class="foot-muted">Support contact coming soon.</p>
+      </div>
+      <div class="foot-links">
+        <a href="#privacy-page">Privacy Policy</a>
+        <a href="#terms-page">Terms of Use</a>
+        <a href="#home">Back to top ↑</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<main id="view-privacy" hidden>
+  <div class="wrap legal">
+    <a class="back-home" href="#home">← Stashlist</a>
+    <h1>Your data stays on your phone.</h1>
+    <p class="updated">Last updated November 23, 2026</p>
+    <p style="margin-top:1.2rem">Stashlist is built to keep everything on your phone. This policy explains exactly what the app does and does not do with your data.</p>
+    <h2>What Stashlist does not do</h2>
+    <ul>
+      <li>It does not collect, store, or transmit any personal information to its developer.</li>
+      <li>It does not use analytics, advertising, or tracking of any kind.</li>
+      <li>It does not have user accounts, logins, or cloud sync.</li>
+      <li>It does not share your data with any third party, except as described below.</li>
+    </ul>
+    <h2>What stays on your phone</h2>
+    <p>Everything you save in Stashlist — titles, posters, genres, status, priority, notes, your own ratings, and any playlists you create — is stored only in the app's local storage on your device. It is never uploaded anywhere. If you delete the app, this data is deleted with it.</p>
+    <h2>What Stashlist reads and why</h2>
+    <p><strong style="color:var(--ink)">Photos:</strong> When you choose to import screenshots, Stashlist reads the images you select to find on-screen text, entirely on your device using Apple's on-device text recognition — the image itself never leaves your phone. If you turn on "Delete screenshots after saving" in Settings, Stashlist also requests permission to delete the original screenshots you imported, after you've confirmed the save. iOS always asks you to confirm this deletion itself.</p>
+    <h2>What Stashlist sends over the network</h2>
+    <p><strong style="color:var(--ink)">The Movie Database (TMDB):</strong> After reading text from a screenshot, Stashlist sends short search queries, not the image itself, to TMDB's API to find the matching movie or TV show title, poster, and synopsis. See <a style="color:var(--outline);text-decoration:underline;font-weight:700" href="https://www.themoviedb.org/privacy-policy" target="_blank" rel="noopener">TMDB's own privacy policy</a> for how they handle these requests. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+    <h2>Changes to this policy</h2>
+    <p>If this policy changes, the "Last updated" date above will change, and the new policy will be posted at the same location.</p>
+    <h2>Contact</h2>
+    <p>Support contact coming soon.</p>
+  </div>
+</main>
+
+<main id="view-terms" hidden>
+  <div class="wrap legal">
+    <a class="back-home" href="#home">← Stashlist</a>
+    <h1>The short version, in plain terms.</h1>
+    <p class="updated">Last updated November 23, 2026</p>
+    <p style="margin-top:1.2rem">These are the terms for using Stashlist. They're meant to be short and plain, in keeping with how the app itself works.</p>
+    <h2>Acceptance</h2>
+    <p>By downloading or using Stashlist, you agree to these terms. If you don't agree, don't use the app.</p>
+    <h2>What Stashlist is</h2>
+    <p>Stashlist is a personal watchlist tool. You import screenshots of movies and shows you've seen elsewhere, and the app reads them on your device and looks up the title, poster, and synopsis using The Movie Database (TMDB). Everything you save is stored locally on your device. See the <a style="color:var(--outline);text-decoration:underline;font-weight:700" href="#privacy-page">Privacy Policy</a> for the full detail.</p>
+    <h2>Your content</h2>
+    <p>Anything you type into Stashlist — notes, ratings, playlist names — is yours. The app doesn't claim any ownership over it, doesn't see it, and doesn't store it anywhere but your own device.</p>
+    <h2>Third-party data</h2>
+    <p>Movie and TV metadata comes from TMDB's API. Stashlist doesn't guarantee this data is accurate, complete, or available at all times — that depends on TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+    <h2>No warranty</h2>
+    <p>Stashlist is provided "as is," without any warranty of any kind. It's a small, independently-built app — there's no guarantee it will always correctly identify a title from a screenshot, work without bugs, or be available at any given time.</p>
+    <h2>Limitation of liability</h2>
+    <p>To the fullest extent permitted by law, Stashlist's developer isn't liable for any damages or data loss arising from your use of the app, including the loss of your saved watchlist or deleted screenshots. Because everything lives only on your device, there is no backup copy anywhere else.</p>
+    <h2>Changes</h2>
+    <p>These terms may change as the app does. The "Last updated" date above will reflect the latest version.</p>
+    <h2>Contact</h2>
+    <p>Support contact coming soon.</p>
+  </div>
+</main>
+
+<script>
+(function(){
+  var views = {home:'view-home', privacy:'view-privacy', terms:'view-terms'};
+  function showFromHash(){
+    var key = (location.hash || '#home').slice(1).replace('-page','');
+    if(!views[key]) key = 'home';
+    Object.keys(views).forEach(function(k){
+      document.getElementById(views[k]).hidden = (k !== key);
+    });
+    window.scrollTo(0,0);
+    armReveals();
+  }
+  window.addEventListener('hashchange', showFromHash);
+
+  var observer = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('in'); });
+  }, {threshold:.15}) : null;
+  function armReveals(){
+    document.querySelectorAll('.reveal:not(.in)').forEach(function(el){
+      if(observer) observer.observe(el); else el.classList.add('in');
+    });
+  }
+
+  showFromHash();
+})();
+</script>
+</body>
+</html>
